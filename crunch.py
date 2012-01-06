@@ -28,9 +28,12 @@ def convertTags(file,paramsDict):
                 ('TPE1',paramsDict['artist'])
                 ]:
             if fid in framesDict: frame = framesDict[fid]
-            else: frame = tag.new_frame(fid)
-            frame.set_text(s)
+            else:
+                frame = tag.new_frame(fid)
+                tag.frames.append(frame)
+            frame.set_text(s,encoding='latin_1')
         tag.commit()
+        if inDictAndTrue('print',paramDict): print 'commited successfully'
     except Exception as e:
         print 'Failed to write %s, with exception %s' %(file,e)
 
@@ -54,7 +57,7 @@ def mapIfAscii(items,rootDir,f,paramDict):
 def mapIfMp3(items,rootDir,f,paramDict):
     if not f: return
     for i in items:
-        if len(i)<4 or i[-4:]!='.mp3': continue
+        if len(i)<4 or i[-4:].lower()!='.mp3': continue
         f(rootDir,i,paramDict)
 
 
