@@ -92,11 +92,18 @@ def setAlbumTag(root,d,paramDict,):
 def crunchRoot(rootDir,paramDict=None):
     crunch(rootDir,paramDict,fDirs=setArtistTag)
 
+
+import argparse
+
+
 if __name__ == '__main__':
-    if len(sys.argv)<2:
-        rootDir='.'
-        #rootDir=r'C:\Users\guy\Music\Collection' #for testing
-    else: rootDir=sys.argv[1]
-    #TODO - read these parameters from the command line
-    paramDict ={'print' : True, 'convertTags' : False}
-    crunchRoot(rootDir,paramDict)
+    parser = argparse.ArgumentParser(description='Edit mp3 tags recursively.')
+    parser.add_argument('rootDir',metavar='root-directory')
+    parser.add_argument('--dry-run','-d', action='store_true', 
+                   help='Don\'t execute, just show which files are going to be changed and how.')
+    parser.add_argument('--verbose', '-v' ,action='store_true', 
+                   help='Print changes')
+    args = parser.parse_args()
+    paramDict ={'print' : args.verbose or args.dry_run, 'convertTags' : args.dry_run==False}
+    
+    crunchRoot(args.rootDir,paramDict)
