@@ -19,6 +19,11 @@ from tagger import *
 #TRCK - track number.
 
 
+def printMsg(msg,paramDict={}):
+    if paramDict and 'outputFunc' in paramDict:
+      paramDict['outputFunc'](msg,*paramDict['printParams'])
+    else: print msg
+
 def convertTags(file,paramsDict):
     try:
         tag = ID3v2(file)
@@ -33,7 +38,7 @@ def convertTags(file,paramsDict):
                 tag.frames.append(frame)
             frame.set_text(s,encoding='latin_1')
         tag.commit()
-        if inDictAndTrue('print',paramDict): print 'commited successfully'
+        if inDictAndTrue('print',paramDict): printMsg('commited successfully',paramsDict)
     except Exception as e:
         print 'Failed to write %s, with exception %s' %(file,e)
 
@@ -73,7 +78,8 @@ def crunch(rootDir,paramDict=None,fDirs=None,fFiles=None):
 def applyFileTags(root,f,paramDict):
     artist = paramDict['artist']
     album = paramDict['album']
-    if inDictAndTrue('print',paramDict): print '%s: Artist: %s, album: %s' %(f,artist,album)
+    if inDictAndTrue('print',paramDict):
+      printMsg('%s: Artist: %s, album: %s' %(f,artist,album),paramDict)
     if inDictAndTrue('convertTags',paramDict):
         convertTags(os.path.join(root,f),paramDict)
 
@@ -83,18 +89,26 @@ def setArtistTag(root,d,paramDict=None):
     crunch(os.path.join(root,d),pDict,setAlbumTag)
 
 def setAlbumTag(root,d,paramDict,):
-    if inDictAndTrue('print',paramDict): print '='*50
+    if inDictAndTrue('print',paramDict):
+      printMsg( '='*50,paramDict)
     pDict = paramDict.copy()
     pDict['album']=d
     crunch(os.path.join(root,d),pDict,fDirs=None,fFiles=applyFileTags)
 
 
 def crunchRoot(rootDir,paramDict=None):
-    crunch(rootDir,paramDict,fDirs=setArtistTag)
+    try:
+      print paramDict
+      crunch(rootDir,paramDict,fDirs=setArtistTag)
+    except Exception as e:
+      printMsg( 'an error has occured: %r' %e, paramDict)
+
+    
+
+
 
 
 import argparse
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Edit mp3 tags recursively.')
