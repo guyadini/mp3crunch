@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "MP3Crunch"
-#define MyAppVersion "0.1"
+#define MyAppVersion "0.2"
 #define MyAppPublisher "guyadini"
 #define MyAppURL "adini.me"
-#define MyAppExeName "crunch.exe"
+#define MyAppExeName "crunchyGUI.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -30,12 +30,12 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "hebrew"; MessagesFile: "compiler:Languages\Hebrew.isl"
 
 [Files]
-Source: "..\dist\crunch.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\{MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\dist\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "README.TXT"; DestDir: "{app}"; Flags: isreadme
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-
+Name: {commondesktop}; Filename: {MyAppExeName}.exe; Tasks: MYAPP; WorkingDir: {app}
 

@@ -101,7 +101,6 @@ def setAlbumTag(root,d,paramDict,):
 
 
 def crunchRoot(rootDir,paramDict=None):
-    print paramDict
     try:
       crunch(rootDir,paramDict,fDirs=setArtistTag)
 
