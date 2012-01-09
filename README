@@ -1,6 +1,5 @@
 Recursively sets tags for the subdirectories below the one given at the command line.
 Required: pytagger. Get it from http://www.liquidx.net/pytagger/, 
 Required: PYTHON2.7
-To run: 1. Try it, see that it works on your filesystem and prints the desired results
-	2. change 'convertTags' to True (in line 100), and run again. This will actually change the tags on your mp3s.
-(this whole mess will be fixed in the next version).
+To run: Either use 'crunch.py' --help to see the command line parameters, or 'crunchGUI.py' for the interactive version.
+Alternatively, if you're running Win7 32bit, the installer from my website (http://adini.me, under 'projects').
