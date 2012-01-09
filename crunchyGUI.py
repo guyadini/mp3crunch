@@ -6,17 +6,30 @@
 #A frame is a simple container, and is in this case used to hold the
 #button and entry widgets.
 
+MAX_WIDTH=140
+
 
 from Tkinter import *
 import tkFileDialog
 import os
 from crunch import *
 
-def printToOutBox(msg,outBox):
+#FIXME - pass to bottom, after passing this as a parameter
+root = Tk()
+root.title('MP3Crunch!')
+
+
+def printToOutBox(msg,outBox, tagName=None):
     outBox['state'] = 'normal'
-    outBox.insert(END, msg+'\n')
+    if tagName: outBox.insert(END, msg+'\n',tagName)
+    else: outBox.insert(END, msg+'\n')
+    newWidth=max(outBox['width'],len(msg)+5)
+    outBox['width']=min(MAX_WIDTH,newWidth)
     outBox['state'] = 'disabled'
-        
+    #FIXME - don't use a global parameter
+    root.update_idletasks()
+
+
 
 class App:
     def __init__(self,parent):
@@ -48,9 +61,12 @@ class App:
 
         self.outBox= Text(parent,)
         self.outBox.grid(column=0,row=2,sticky='NS',columnspan=2)
+        self.outBox.tag_config("err", background="yellow", foreground="red")
+        self.outBox.tag_config("convert", foreground="blue")
+        self.outBox.tag_config("dir", foreground="green")
 
-	self.outBox.insert(END, 'Uncheck dry-run to perform actual tag crunching\n' )
-	self.outBox['state']='disabled'
+        self.outBox.insert(END, 'Uncheck dry-run to perform actual tag crunching\n' )
+        self.outBox['state']='disabled'
 
         scrollbar = Scrollbar(parent)
         scrollbar.grid(row=2,column=3,sticky='NS' )
@@ -67,19 +83,15 @@ class App:
 
 
     def fixTags(self):
-	self.outBox['state'] = 'normal'
-	self.outBox.delete(0.0,END)
-	self.outBox['state'] = 'disabled'
-	paramDict={'convertTags' : False, 'print' : True,
-		 'outputFunc' : printToOutBox, 'printParams' : [self.outBox]}
-	crunchRoot(self.entry.get(),paramDict)
-	
+        self.outBox['state'] = 'normal'
+        self.outBox.delete(0.0,END)
+        self.outBox['state'] = 'disabled'
+        paramDict={'convertTags' : self.dryRunVar.get()==0, 'print' : True,
+         'outputFunc' : printToOutBox, 'printParams' : [self.outBox]}
+        crunchRoot(self.entry.get(),paramDict)
 
 
 
-
-root = Tk()
-root.title('MP3Crunch!')
 app = App(root)
 
 root.mainloop()
