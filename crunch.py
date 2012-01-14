@@ -32,13 +32,15 @@ def convertTags(file,paramDict):
         framesDict = {x.fid : x for x in tag.frames}
         for fid, s in [
                 ('TALB',paramDict['album']),
-                ('TPE1',paramDict['artist'])
+                ('TPE1',paramDict['artist']),
+                ('TPE2',paramDict['artist']),
+                ('TIT2',paramDict['title'])
                 ]:
             if fid in framesDict: frame = framesDict[fid]
             else:
                 frame = tag.new_frame(fid)
                 tag.frames.append(frame)
-            frame.set_text(s,encoding='latin_1')
+            frame.set_text(s,encoding='utf_16')
         tag.commit()
         if inDictAndTrue('print',paramDict): printMsg('commited successfully',paramDict)
     except Exception as e:
@@ -51,14 +53,9 @@ def inDictAndTrue(k,d):
         return True
     else: return False
 
-def nonAscii(s):
-    if max([ord(c) for c in s])>0x7E: return True
-    else: return False
-
-def mapIfAscii(items,rootDir,f,paramDict):
+def mapWithParam(items,rootDir,f,paramDict):
     if not f: return
     for i in items:
-        if nonAscii(i): continue
         f(rootDir,i,paramDict)
 
 def mapIfMp3(items,rootDir,f,paramDict):
@@ -71,15 +68,16 @@ def mapIfMp3(items,rootDir,f,paramDict):
 def crunch(rootDir,paramDict=None,fDirs=None,fFiles=None):
     '''Apply fDir(**kwargs) to all the subdirectories of rootDir,
     and fFile(**kwargs) to all the files in the directory'''
-    w = os.walk(rootDir)
+    w = os.walk(unicode(rootDir),'utf-16')
     rootDir,dirs,files = w.next()
-    mapIfAscii(dirs,rootDir,fDirs,paramDict)
+    mapWithParam(dirs,rootDir,fDirs,paramDict)
     mapIfMp3(files,rootDir,fFiles,paramDict)
 
 
 def applyFileTags(root,f,paramDict):
     artist = paramDict['artist']
     album = paramDict['album']
+    paramDict['title']=f
     if inDictAndTrue('print',paramDict):
       printMsg('%s: Artist: %s, album: %s' %(f,artist,album),paramDict,tagName='convert')
     if inDictAndTrue('convertTags',paramDict):
